@@ -19,6 +19,8 @@ namespace FirstOne.Cadastros.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            ServicesRegistrator.RegisterService(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

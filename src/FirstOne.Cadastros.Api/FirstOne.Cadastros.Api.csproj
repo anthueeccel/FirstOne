@@ -5,7 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FirstOne.Cadastros.Application\FirstOne.Cadastros.Application.csproj" />
+    <ProjectReference Include="..\FirstOne.Cadastros.Domain\FirstOne.Cadastros.Domain.csproj" />
+    <ProjectReference Include="..\FirstOne.Cadastros.Infra.Data\FirstOne.Cadastros.Infra.Data.csproj" />
   </ItemGroup>
 
 
