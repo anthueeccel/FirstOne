@@ -5,6 +5,7 @@ using FirstOne.Cadastros.Application.Services;
 using FirstOne.Cadastros.Application.ViewModels;
 using FirstOne.Cadastros.Domain.Entities;
 using FirstOne.Cadastros.Domain.Interfaces;
+using FirstOne.Cadastros.Domain.Mediator;
 using Moq;
 using Moq.AutoMock;
 using System;
@@ -28,11 +29,12 @@ namespace FirstOne.Cadastros.Application.Tests
             }).CreateMapper();
 
             var pessoaRepository = _mocker.GetMock<IPessoaRepository>();
+            var mediatorHandler = _mocker.GetMock<IMediatorHandler>();
 
-            _pessoaAppService = new PessoaAppService(pessoaRepository.Object, mapper);
+            _pessoaAppService = new PessoaAppService(pessoaRepository.Object, mapper, mediatorHandler.Object);
         }
 
-        [Fact(DisplayName = "GetAll_listar_todas_pessoas")]
+        [Fact(DisplayName = "GetAll deve listar pessoas")]
         public void GetAll_listar_todas_pessoas()
         {
             //Arrange
@@ -53,9 +55,8 @@ namespace FirstOne.Cadastros.Application.Tests
 
         }
 
-
-        [Fact(DisplayName = "AddAsync_deve_adicionar_pessoa")]
-        public void AddAsync_deve_adicionar_pessoa()
+        [Fact(DisplayName = "Add deve adicionar pessoa")]
+        public void Add_deve_adicionar_pessoa()
         {
             //Arrange 
             var pessoaViewModel = new PessoaViewModel
@@ -65,10 +66,30 @@ namespace FirstOne.Cadastros.Application.Tests
             };
 
             //Act 
-            var result = _pessoaAppService.AddAsync(pessoaViewModel);
+            var result = _pessoaAppService.Add(pessoaViewModel);
 
             //Assert
             Assert.True(result.IsValid);
+            _mocker.GetMock<IPessoaRepository>().Verify(v => v.Add(It.IsAny<Pessoa>()), Times.Once);
+        }
+
+        [Fact(DisplayName = "Add deve falhar adicionar pessoa")]
+        public void Add_deve_falhar_adicionar_pessoa()
+        {
+            //Arrange 
+            var pessoaViewModel = new PessoaViewModel
+            {
+                Id = Guid.NewGuid(),
+                Nome = ""
+            };
+
+            //Act 
+            var result = _pessoaAppService.Add(pessoaViewModel);
+
+            //Assert
+            Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
+            Assert.Equal("Favor informar um Nome.", result.Errors.First().ErrorMessage);
         }
     }
 }

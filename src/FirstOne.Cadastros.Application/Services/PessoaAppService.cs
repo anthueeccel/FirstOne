@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using FirstOne.Cadastros.Application.Interfaces;
 using FirstOne.Cadastros.Application.ViewModels;
+using FirstOne.Cadastros.Domain.Commands;
+using FirstOne.Cadastros.Domain.Entities;
 using FirstOne.Cadastros.Domain.Interfaces;
+using FirstOne.Cadastros.Domain.Mediator;
 using FluentValidation.Results;
+using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace FirstOne.Cadastros.Application.Services
 {
@@ -12,17 +15,30 @@ namespace FirstOne.Cadastros.Application.Services
     {
         private readonly IMapper _mapper;
         private readonly IPessoaRepository _repository;
+        private readonly IMediatorHandler _mediatorHandler;
 
         public PessoaAppService(IPessoaRepository repository,
-                             IMapper mapper)
+                                IMapper mapper,
+                                IMediatorHandler mediatorHandler)
         {
             _repository = repository;
             _mapper = mapper;
+            _mediatorHandler = mediatorHandler;
         }
-        
-        public ValidationResult AddAsync(PessoaViewModel pessoa)
+
+        public ValidationResult Add(PessoaViewModel pessoaViewModel)
         {
-            throw new System.NotImplementedException();
+            var command = new AddPessoaCommand(pessoaViewModel.Nome);
+            if (!command.IsValid())
+                return command.ValidationResult;
+
+
+            var pessoa = new Pessoa(Guid.NewGuid(), command.Nome);
+            _repository.Add(pessoa);
+
+            _mediatorHandler.SendCommand(command);
+
+            return command.ValidationResult;
         }
 
         public IEnumerable<PessoaViewModel> GetAll()

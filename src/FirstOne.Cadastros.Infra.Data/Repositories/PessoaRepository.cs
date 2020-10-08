@@ -15,5 +15,10 @@ namespace FirstOne.Cadastros.Infra.Data.Repositories
                 new Pessoa(Guid.NewGuid(), "Teste")
             };
         }
+
+        public void Add(Pessoa pessoa)
+        {
+
+        }
     }
 }

@@ -8,6 +8,6 @@ namespace FirstOne.Cadastros.Application.Interfaces
     {
         IEnumerable<PessoaViewModel> GetAll();
 
-        ValidationResult AddAsync(PessoaViewModel pessoa);
+        ValidationResult Add(PessoaViewModel pessoa);
     }
 }

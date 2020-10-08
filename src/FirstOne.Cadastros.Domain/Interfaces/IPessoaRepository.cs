@@ -6,5 +6,6 @@ namespace FirstOne.Cadastros.Domain.Interfaces
     public interface IPessoaRepository
     {
         IEnumerable<Pessoa> GetAll();
+        void Add(Pessoa pessoa);
     }
 }
