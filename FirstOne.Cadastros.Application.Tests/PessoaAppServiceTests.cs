@@ -3,14 +3,17 @@ using FirstOne.Cadastros.Application.AutoMapper;
 using FirstOne.Cadastros.Application.Interfaces;
 using FirstOne.Cadastros.Application.Services;
 using FirstOne.Cadastros.Application.ViewModels;
+using FirstOne.Cadastros.Domain.Commands;
 using FirstOne.Cadastros.Domain.Entities;
 using FirstOne.Cadastros.Domain.Interfaces;
 using FirstOne.Cadastros.Domain.Mediator;
+using FirstOne.Cadastros.Domain.Messaging;
 using Moq;
 using Moq.AutoMock;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FirstOne.Cadastros.Application.Tests
@@ -56,7 +59,7 @@ namespace FirstOne.Cadastros.Application.Tests
         }
 
         [Fact(DisplayName = "Add deve adicionar pessoa")]
-        public void Add_deve_adicionar_pessoa()
+        public async Task Add_deve_adicionar_pessoa()
         {
             //Arrange 
             var pessoaViewModel = new PessoaViewModel
@@ -66,15 +69,17 @@ namespace FirstOne.Cadastros.Application.Tests
             };
 
             //Act 
-            var result = _pessoaAppService.Add(pessoaViewModel);
+            await _pessoaAppService.AddAsync(pessoaViewModel);
 
             //Assert
-            Assert.True(result.IsValid);
-            _mocker.GetMock<IPessoaRepository>().Verify(v => v.Add(It.IsAny<Pessoa>()), Times.Once);
+            _mocker.GetMock<IMediatorHandler>().Verify(dn =>
+                      dn.PublishDomainNotification(It.IsAny<DomainNotification>()), Times.Never);
+            _mocker.GetMock<IMediatorHandler>().Verify(v => 
+                      v.SendCommand(It.IsAny<AddPessoaCommand>()), Times.Once);
         }
 
         [Fact(DisplayName = "Add deve falhar adicionar pessoa")]
-        public void Add_deve_falhar_adicionar_pessoa()
+        public async Task Add_deve_falhar_adicionar_pessoa()
         {
             //Arrange 
             var pessoaViewModel = new PessoaViewModel
@@ -84,12 +89,14 @@ namespace FirstOne.Cadastros.Application.Tests
             };
 
             //Act 
-            var result = _pessoaAppService.Add(pessoaViewModel);
+            await _pessoaAppService.AddAsync(pessoaViewModel);
 
             //Assert
-            Assert.False(result.IsValid);
-            Assert.Single(result.Errors);
-            Assert.Equal("Favor informar um Nome.", result.Errors.First().ErrorMessage);
+            _mocker.GetMock<IMediatorHandler>().Verify(e => 
+                       e.PublishDomainNotification(It.Is<DomainNotification>(
+                           dm => dm.Value == "Favor informar o Nome.")), Times.Once);
+            _mocker.GetMock<IMediatorHandler>().Verify(e =>
+                       e.SendCommand(It.IsAny<AddPessoaCommand>()), Times.Never);
         }
     }
 }

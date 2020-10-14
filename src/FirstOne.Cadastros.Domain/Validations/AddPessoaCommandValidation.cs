@@ -8,7 +8,7 @@ namespace FirstOne.Cadastros.Domain.Validations
         public AddPessoaCommandValidation()
         {
             RuleFor(p => p.Nome)
-                .NotEmpty().WithMessage("Favor informar um Nome.");
+                .NotEmpty().WithMessage("Favor informar o Nome.");
         }
     }
 }

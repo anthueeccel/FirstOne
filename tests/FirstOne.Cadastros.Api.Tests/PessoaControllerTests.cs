@@ -2,11 +2,13 @@ using FirstOne.Cadastros.Api.Controllers;
 using FirstOne.Cadastros.Application.Interfaces;
 using FirstOne.Cadastros.Application.ViewModels;
 using FirstOne.Cadastros.Domain.Commands;
+using FirstOne.Cadastros.Domain.Messaging;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Moq.AutoMock;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace FirstOne.Cadastros.Api.Tests
@@ -19,7 +21,9 @@ namespace FirstOne.Cadastros.Api.Tests
         public PessoaControllerTests()
         {
             _mocker = new AutoMocker();
-            _controller = _mocker.CreateInstance<PessoaController>();
+
+            _controller = new PessoaController(_mocker.GetMock<IPessoaAppService>().Object,
+                                               _mocker.GetMock<DomainNotificationHandler>().Object);
         }
 
         [Fact(DisplayName = "Verifica entidade PessoaController ")]
@@ -39,23 +43,72 @@ namespace FirstOne.Cadastros.Api.Tests
 
         [Fact(DisplayName = "Deve falhar adicionar pessoa")]
         [Trait("Cadastro", "PessoaController")]
-        public void Add_deve_falhar_adicionar()
+        public async Task Add_deve_falhar_adicionar()
         {
             var pessoa = new PessoaViewModel()
             {
                 Nome = ""
             };
 
-            var command = new AddPessoaCommand(pessoa.Nome);
-            command.IsValid();
-            _mocker.GetMock<IPessoaAppService>().Setup(e => e.Add(It.IsAny<PessoaViewModel>())).Returns(command.ValidationResult);
+            var notifications = new List<DomainNotification>()
+            {
+                new DomainNotification("Favor informar o nome")
+            };
 
-            var result = _controller.Add(pessoa);
+            _mocker.GetMock<DomainNotificationHandler>().Setup(e => e.HasNotification()).Returns(true);
+            _mocker.GetMock<DomainNotificationHandler>().Setup(e => e.GetNotifications()).Returns(notifications);
+
+            var result = await _controller.Add(pessoa);
 
             var erro = result as UnprocessableEntityObjectResult;
             Assert.NotNull(erro);
             Assert.Equal(422, erro.StatusCode);
-
         }
+
+        [Fact(DisplayName = "Deve adicionar pessoa")]
+        [Trait("Cadastro", "PessoaController")]
+        public async Task Add_deve_adicionar()
+        {
+            //Arrange
+            var pessoa = new PessoaViewModel()
+            {
+                Nome = "Nome Teste"
+            };
+
+            _mocker.GetMock<DomainNotificationHandler>().Setup(e => e.HasNotification()).Returns(false);
+
+            //Act
+            var result = await _controller.Add(pessoa);
+
+            //Assert
+            var ok = result as OkResult;
+            Assert.NotNull(ok);
+            Assert.Equal(200, ok.StatusCode);
+        }
+
+        [Fact(DisplayName = "Deve adicionar pessoa")]
+        [Trait("Cadastro", "PessoaController")]
+        public async Task Add_deve_atualizar()
+        {
+            //Arrange
+            var pessoa = new PessoaViewModel()
+            {
+                Id = Guid.NewGuid(),
+                Nome = "Nome Teste"
+            };
+
+            _mocker.GetMock<DomainNotificationHandler>().Setup(e => e.HasNotification()).Returns(false);
+
+            //Act
+            var result = await _controller.Update(pessoa);
+
+            //Assert
+            _mocker.GetMock<DomainNotificationHandler>().Verify(dn => dn.HasNotification(), Times.Once);
+            _mocker.GetMock<IPessoaAppService>().Verify(v => v.UpdateAsync(It.IsAny<PessoaViewModel>()), Times.Once);
+            var ok = result as OkResult;
+            Assert.NotNull(ok);
+            Assert.Equal(200, ok.StatusCode);
+        }
+
     }
 }
