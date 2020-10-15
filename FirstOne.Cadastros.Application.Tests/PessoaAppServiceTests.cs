@@ -98,5 +98,67 @@ namespace FirstOne.Cadastros.Application.Tests
             _mocker.GetMock<IMediatorHandler>().Verify(e =>
                        e.SendCommand(It.IsAny<AddPessoaCommand>()), Times.Never);
         }
+
+        [Fact(DisplayName = "Add deve atualizar pessoa")]
+        public async Task Add_deve_atualizar_pessoa()
+        {
+            //Arrange 
+            var pessoaViewModel = new PessoaViewModel
+            {
+                Id = Guid.NewGuid(),
+                Nome = "Tester"
+            };
+
+            //Act 
+            await _pessoaAppService.UpdateAsync(pessoaViewModel);
+
+            //Assert
+            _mocker.GetMock<IMediatorHandler>().Verify(e =>
+                       e.PublishDomainNotification(It.IsAny<DomainNotification>()), Times.Never);
+            _mocker.GetMock<IMediatorHandler>().Verify(e =>
+                       e.SendCommand(It.IsAny<UpdatePessoaCommand>()), Times.Once);
+        }
+
+        [Fact(DisplayName = "Add deve falhar atualizar pessoa validator nome")]
+        public async Task Add_deve_falhar_atualizar_pessoa_validator_nome()
+        {
+            //Arrange 
+            var pessoaViewModel = new PessoaViewModel
+            {
+                Id = Guid.NewGuid(),
+                Nome = ""
+            };
+
+            //Act 
+            await _pessoaAppService.UpdateAsync(pessoaViewModel);
+
+            //Assert
+            _mocker.GetMock<IMediatorHandler>().Verify(e =>
+                       e.PublishDomainNotification(It.Is<DomainNotification>(dn => 
+                            dn.Value == "Favor informar o Nome.")), Times.Once);
+            _mocker.GetMock<IMediatorHandler>().Verify(e =>
+                       e.SendCommand(It.IsAny<UpdatePessoaCommand>()), Times.Never);
+        }
+
+        [Fact(DisplayName = "Add deve falhar atualizar pessoa validator id")]
+        public async Task Add_deve_falhar_atualizar_pessoa_validator_id()
+        {
+            //Arrange 
+            var pessoaViewModel = new PessoaViewModel
+            {
+                Id = Guid.Empty,
+                Nome = "Tester"
+            };
+
+            //Act 
+            await _pessoaAppService.UpdateAsync(pessoaViewModel);
+
+            //Assert
+            _mocker.GetMock<IMediatorHandler>().Verify(e =>
+                       e.PublishDomainNotification(It.Is<DomainNotification>(dn =>
+                            dn.Value == "Favor informar o Id.")), Times.Once);
+            _mocker.GetMock<IMediatorHandler>().Verify(e =>
+                       e.SendCommand(It.IsAny<UpdatePessoaCommand>()), Times.Never);
+        }
     }
 }

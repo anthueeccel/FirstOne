@@ -46,9 +46,20 @@ namespace FirstOne.Cadastros.Application.Services
             return _mapper.Map<List<PessoaViewModel>>(_repository.GetAll());
         }
 
-        public Task UpdateAsync(PessoaViewModel pessoa)
+        public async Task UpdateAsync(PessoaViewModel pessoa)
         {
-            throw new System.NotImplementedException();
+            var command = new UpdatePessoaCommand(pessoa.Id, pessoa.Nome);
+
+            if (!command.IsValid())
+            {
+                foreach (var error in command.ValidationResult.Errors)
+                {
+                    await _mediatorHandler.PublishDomainNotification(new DomainNotification(error.ErrorMessage));
+                }
+                return;
+            }
+
+            await _mediatorHandler.SendCommand(command);
         }
     }
 }

@@ -1,7 +1,6 @@
 using FirstOne.Cadastros.Api.Controllers;
 using FirstOne.Cadastros.Application.Interfaces;
 using FirstOne.Cadastros.Application.ViewModels;
-using FirstOne.Cadastros.Domain.Commands;
 using FirstOne.Cadastros.Domain.Messaging;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -52,7 +51,7 @@ namespace FirstOne.Cadastros.Api.Tests
 
             var notifications = new List<DomainNotification>()
             {
-                new DomainNotification("Favor informar o nome")
+                new DomainNotification("Favor informar o Nnome.")
             };
 
             _mocker.GetMock<DomainNotificationHandler>().Setup(e => e.HasNotification()).Returns(true);
@@ -86,7 +85,7 @@ namespace FirstOne.Cadastros.Api.Tests
             Assert.Equal(200, ok.StatusCode);
         }
 
-        [Fact(DisplayName = "Deve adicionar pessoa")]
+        [Fact(DisplayName = "Deve atualizar pessoa")]
         [Trait("Cadastro", "PessoaController")]
         public async Task Add_deve_atualizar()
         {
@@ -108,6 +107,37 @@ namespace FirstOne.Cadastros.Api.Tests
             var ok = result as OkResult;
             Assert.NotNull(ok);
             Assert.Equal(200, ok.StatusCode);
+        }
+
+        [Fact(DisplayName = "Deve falhar atualizar pessoa")]
+        [Trait("Cadastro", "PessoaController")]
+        public async Task Add_deve_falhar_atualizar()
+        {
+            //Arrange
+            var pessoa = new PessoaViewModel()
+            {
+                Id = Guid.NewGuid(),
+                Nome = ""
+            };
+
+            var notifications = new List<DomainNotification>()
+            {
+                new DomainNotification("Favor informar o Nome.")
+            };
+
+            _mocker.GetMock<DomainNotificationHandler>().Setup(e => e.HasNotification()).Returns(true);
+            _mocker.GetMock<DomainNotificationHandler>().Setup(e => e.GetNotifications()).Returns(notifications);
+
+            //Act
+            var result = await _controller.Update(pessoa);
+
+            //Assert
+            _mocker.GetMock<IPessoaAppService>().Verify(v => v.UpdateAsync(It.IsAny<PessoaViewModel>()), Times.Once);
+            _mocker.GetMock<DomainNotificationHandler>().Verify(e => e.HasNotification(), Times.Once);
+            _mocker.GetMock<DomainNotificationHandler>().Verify(e => e.GetNotifications(), Times.Once);
+            var erro = result as UnprocessableEntityObjectResult;
+            Assert.NotNull(erro);
+            Assert.Equal(422, erro.StatusCode);
         }
 
     }

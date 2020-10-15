@@ -14,7 +14,7 @@ namespace FirstOne.Cadastros.Domain.Mediator
             _mediator = mediator;
         }
 
-        public async Task SendCommand<T>(T command) where T : AddPessoaCommand
+        public async Task SendCommand<T>(T command) where T : Command
         {
             await _mediator.Send(command);
         }

@@ -1,13 +1,11 @@
 ﻿using FirstOne.Cadastros.Domain.Validations;
 using FluentValidation.Results;
-using MediatR;
 
 namespace FirstOne.Cadastros.Domain.Commands
 {
-    public class AddPessoaCommand : IRequest<bool>
+    public class AddPessoaCommand : Command
     {
         public string Nome { get; }
-        public ValidationResult ValidationResult { get; private set; }
 
         public AddPessoaCommand(string nome)
         {
