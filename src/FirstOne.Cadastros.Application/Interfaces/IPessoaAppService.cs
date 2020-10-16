@@ -11,5 +11,6 @@ namespace FirstOne.Cadastros.Application.Interfaces
         Task AddAsync(PessoaViewModel pessoa);
         Task UpdateAsync(PessoaViewModel pessoa);
         Task RemoveAsync(Guid id);
+        PessoaViewModel GetById(Guid id);
     }
 }

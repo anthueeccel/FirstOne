@@ -76,5 +76,10 @@ namespace FirstOne.Cadastros.Api.Controllers
             return Ok();
         }
 
+        [HttpGet("{id}")]
+        public PessoaViewModel GetById(Guid id)
+        {
+            return _appService.GetById(id);
+        }
     }
 }

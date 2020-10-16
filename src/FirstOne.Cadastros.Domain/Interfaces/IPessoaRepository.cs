@@ -10,5 +10,6 @@ namespace FirstOne.Cadastros.Domain.Interfaces
         void Add(Pessoa pessoa);
         void Update(Pessoa pessoa);
         void Remove(Guid id);
+        Pessoa GetById(Guid id);
     }
 }
