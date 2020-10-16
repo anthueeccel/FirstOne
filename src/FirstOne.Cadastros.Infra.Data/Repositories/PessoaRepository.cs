@@ -35,5 +35,10 @@ namespace FirstOne.Cadastros.Infra.Data.Repositories
         {
             _mongoDbContext.Pessoas.DeleteOne(r => r.Id == id);
         }
+
+        public Pessoa GetById(Guid id)
+        {
+            return _mongoDbContext.Pessoas.Find(g => g.Id == id).FirstOrDefault();
+        }
     }
 }

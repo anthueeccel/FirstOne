@@ -32,27 +32,20 @@ namespace FirstOne.Cadastros.Application.Services
 
             if (!command.IsValid())
             {
-                foreach (var error in command.ValidationResult.Errors)
-                {
-                    await _mediatorHandler.PublishDomainNotification(new DomainNotification(error.ErrorMessage));
-                }
+                await RaiseValidationError(command);
                 return;
             }
 
             await _mediatorHandler.SendCommand(command);
         }
 
-              
         public async Task UpdateAsync(PessoaViewModel pessoa)
         {
             var command = new UpdatePessoaCommand(pessoa.Id, pessoa.Nome);
 
             if (!command.IsValid())
             {
-                foreach (var error in command.ValidationResult.Errors)
-                {
-                    await _mediatorHandler.PublishDomainNotification(new DomainNotification(error.ErrorMessage));
-                }
+                await RaiseValidationError(command);
                 return;
             }
 
@@ -65,10 +58,7 @@ namespace FirstOne.Cadastros.Application.Services
 
             if (!command.IsValid())
             {
-                foreach (var error in command.ValidationResult.Errors)
-                {
-                    await _mediatorHandler.PublishDomainNotification(new DomainNotification(error.ErrorMessage));
-                }
+                await RaiseValidationError(command);
                 return;
             }
 
@@ -78,6 +68,19 @@ namespace FirstOne.Cadastros.Application.Services
         public IEnumerable<PessoaViewModel> GetAll()
         {
             return _mapper.Map<List<PessoaViewModel>>(_repository.GetAll());
+        }
+
+        public PessoaViewModel GetById(Guid id)
+        {
+            return _mapper.Map<PessoaViewModel>(_repository.GetById(id));
+        }
+
+        private async Task RaiseValidationError(Command command)
+        {
+            foreach (var error in command.ValidationResult.Errors)
+            {
+                await _mediatorHandler.PublishDomainNotification(new DomainNotification(error.ErrorMessage));
+            }
         }
     }
 }
