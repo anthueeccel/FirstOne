@@ -43,7 +43,7 @@ namespace FirstOne.Cadastros.Api.Controllers
             return Ok();
         }
 
-        [HttpPost]
+        [HttpPut]
         public async Task<IActionResult> Update([FromBody] PessoaViewModel pessoa)
         {
             await _appService.UpdateAsync(pessoa);

@@ -7,5 +7,6 @@ namespace FirstOne.Cadastros.Domain.Interfaces
     {
         IEnumerable<Pessoa> GetAll();
         void Add(Pessoa pessoa);
+        void Update(Pessoa pessoa);
     }
 }

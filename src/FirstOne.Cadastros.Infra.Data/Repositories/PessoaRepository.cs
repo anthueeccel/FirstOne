@@ -24,5 +24,10 @@ namespace FirstOne.Cadastros.Infra.Data.Repositories
         {
             _mongoDbContext.Pessoas.InsertOne(pessoa);
         }
+
+        public void Update(Pessoa pessoa)
+        {
+            _mongoDbContext.Pessoas.ReplaceOne(r => r.Id == pessoa.Id, pessoa);
+        }
     }
 }
