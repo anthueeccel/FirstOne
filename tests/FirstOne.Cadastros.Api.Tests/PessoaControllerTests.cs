@@ -87,7 +87,7 @@ namespace FirstOne.Cadastros.Api.Tests
 
         [Fact(DisplayName = "Deve atualizar pessoa")]
         [Trait("Cadastro", "PessoaController")]
-        public async Task Add_deve_atualizar()
+        public async Task Update_deve_atualizar()
         {
             //Arrange
             var pessoa = new PessoaViewModel()
@@ -111,7 +111,7 @@ namespace FirstOne.Cadastros.Api.Tests
 
         [Fact(DisplayName = "Deve falhar atualizar pessoa")]
         [Trait("Cadastro", "PessoaController")]
-        public async Task Add_deve_falhar_atualizar()
+        public async Task Update_deve_falhar_atualizar()
         {
             //Arrange
             var pessoa = new PessoaViewModel()
@@ -133,6 +133,59 @@ namespace FirstOne.Cadastros.Api.Tests
 
             //Assert
             _mocker.GetMock<IPessoaAppService>().Verify(v => v.UpdateAsync(It.IsAny<PessoaViewModel>()), Times.Once);
+            _mocker.GetMock<DomainNotificationHandler>().Verify(e => e.HasNotification(), Times.Once);
+            _mocker.GetMock<DomainNotificationHandler>().Verify(e => e.GetNotifications(), Times.Once);
+            var erro = result as UnprocessableEntityObjectResult;
+            Assert.NotNull(erro);
+            Assert.Equal(422, erro.StatusCode);
+        }
+
+        [Fact(DisplayName = "Deve atualizar pessoa")]
+        [Trait("Cadastro", "PessoaController")]
+        public async Task Remove_deve_remover()
+        {
+            //Arrange
+            var pessoa = new PessoaViewModel()
+            {
+                Id = Guid.NewGuid()
+            };
+
+            _mocker.GetMock<DomainNotificationHandler>().Setup(e => e.HasNotification()).Returns(false);
+
+            //Act
+            var result = await _controller.Remove(pessoa.Id);
+
+            //Assert
+            _mocker.GetMock<DomainNotificationHandler>().Verify(dn => dn.HasNotification(), Times.Once);
+            _mocker.GetMock<IPessoaAppService>().Verify(v => v.RemoveAsync(It.IsAny<Guid>()), Times.Once);
+            var ok = result as OkResult;
+            Assert.NotNull(ok);
+            Assert.Equal(200, ok.StatusCode);
+        }
+
+        [Fact(DisplayName = "Deve falhar remover pessoa sem id")]
+        [Trait("Cadastro", "PessoaController")]
+        public async Task Remove_deve_falhar_remover()
+        {
+            //Arrange
+            var pessoa = new PessoaViewModel()
+            {
+                Id = default,
+            };
+
+            var notifications = new List<DomainNotification>()
+            {
+                new DomainNotification("Favor informar o Id.")
+            };
+
+            _mocker.GetMock<DomainNotificationHandler>().Setup(e => e.HasNotification()).Returns(true);
+            _mocker.GetMock<DomainNotificationHandler>().Setup(e => e.GetNotifications()).Returns(notifications);
+
+            //Act
+            var result = await _controller.Remove(pessoa.Id);
+
+            //Assert
+            _mocker.GetMock<IPessoaAppService>().Verify(v => v.RemoveAsync(It.IsAny<Guid>()), Times.Once);
             _mocker.GetMock<DomainNotificationHandler>().Verify(e => e.HasNotification(), Times.Once);
             _mocker.GetMock<DomainNotificationHandler>().Verify(e => e.GetNotifications(), Times.Once);
             var erro = result as UnprocessableEntityObjectResult;

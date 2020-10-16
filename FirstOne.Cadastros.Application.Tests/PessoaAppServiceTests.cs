@@ -99,8 +99,8 @@ namespace FirstOne.Cadastros.Application.Tests
                        e.SendCommand(It.IsAny<AddPessoaCommand>()), Times.Never);
         }
 
-        [Fact(DisplayName = "Add deve atualizar pessoa")]
-        public async Task Add_deve_atualizar_pessoa()
+        [Fact(DisplayName = "Update deve atualizar pessoa")]
+        public async Task Update_deve_atualizar_pessoa()
         {
             //Arrange 
             var pessoaViewModel = new PessoaViewModel
@@ -119,8 +119,8 @@ namespace FirstOne.Cadastros.Application.Tests
                        e.SendCommand(It.IsAny<UpdatePessoaCommand>()), Times.Once);
         }
 
-        [Fact(DisplayName = "Add deve falhar atualizar pessoa validator nome")]
-        public async Task Add_deve_falhar_atualizar_pessoa_validator_nome()
+        [Fact(DisplayName = "Update deve falhar atualizar pessoa validator nome")]
+        public async Task Update_deve_falhar_atualizar_pessoa_validator_nome()
         {
             //Arrange 
             var pessoaViewModel = new PessoaViewModel
@@ -140,8 +140,8 @@ namespace FirstOne.Cadastros.Application.Tests
                        e.SendCommand(It.IsAny<UpdatePessoaCommand>()), Times.Never);
         }
 
-        [Fact(DisplayName = "Add deve falhar atualizar pessoa validator id")]
-        public async Task Add_deve_falhar_atualizar_pessoa_validator_id()
+        [Fact(DisplayName = "Update deve falhar atualizar pessoa validator id")]
+        public async Task Update_deve_falhar_atualizar_pessoa_validator_id()
         {
             //Arrange 
             var pessoaViewModel = new PessoaViewModel
@@ -159,6 +159,45 @@ namespace FirstOne.Cadastros.Application.Tests
                             dn.Value == "Favor informar o Id.")), Times.Once);
             _mocker.GetMock<IMediatorHandler>().Verify(e =>
                        e.SendCommand(It.IsAny<UpdatePessoaCommand>()), Times.Never);
+        }
+
+        [Fact(DisplayName = "Remove deve remover pessoa")]
+        public async Task Remove_deve_remover_pessoa()
+        {
+            //Arrange 
+            var pessoaViewModel = new PessoaViewModel
+            {
+                Id = Guid.NewGuid()
+            };
+
+            //Act 
+            await _pessoaAppService.RemoveAsync(pessoaViewModel.Id);
+
+            //Assert
+            _mocker.GetMock<IMediatorHandler>().Verify(e =>
+                       e.PublishDomainNotification(It.IsAny<DomainNotification>()), Times.Never);
+            _mocker.GetMock<IMediatorHandler>().Verify(e =>
+                       e.SendCommand(It.IsAny<RemovePessoaCommand>()), Times.Once);
+        }
+
+        [Fact(DisplayName = "Remove deve falhar remover pessoa validator id")]
+        public async Task Remove_deve_falhar_remover_pessoa_validator_id()
+        {
+            //Arrange 
+            var pessoaViewModel = new PessoaViewModel
+            {
+                Id = Guid.Empty
+            };
+
+            //Act 
+            await _pessoaAppService.RemoveAsync(pessoaViewModel.Id);
+
+            //Assert
+            _mocker.GetMock<IMediatorHandler>().Verify(e =>
+                       e.PublishDomainNotification(It.Is<DomainNotification>(dn =>
+                            dn.Value == "Favor informar o Id.")), Times.Once);
+            _mocker.GetMock<IMediatorHandler>().Verify(e =>
+                       e.SendCommand(It.IsAny<RemovePessoaCommand>()), Times.Never);
         }
     }
 }

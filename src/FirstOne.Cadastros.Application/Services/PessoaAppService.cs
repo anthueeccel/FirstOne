@@ -5,6 +5,7 @@ using FirstOne.Cadastros.Domain.Commands;
 using FirstOne.Cadastros.Domain.Interfaces;
 using FirstOne.Cadastros.Domain.Mediator;
 using FirstOne.Cadastros.Domain.Messaging;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -41,11 +42,7 @@ namespace FirstOne.Cadastros.Application.Services
             await _mediatorHandler.SendCommand(command);
         }
 
-        public IEnumerable<PessoaViewModel> GetAll()
-        {
-            return _mapper.Map<List<PessoaViewModel>>(_repository.GetAll());
-        }
-
+              
         public async Task UpdateAsync(PessoaViewModel pessoa)
         {
             var command = new UpdatePessoaCommand(pessoa.Id, pessoa.Nome);
@@ -60,6 +57,27 @@ namespace FirstOne.Cadastros.Application.Services
             }
 
             await _mediatorHandler.SendCommand(command);
+        }
+
+        public async Task RemoveAsync(Guid id)
+        {
+            var command = new RemovePessoaCommand(id);
+
+            if (!command.IsValid())
+            {
+                foreach (var error in command.ValidationResult.Errors)
+                {
+                    await _mediatorHandler.PublishDomainNotification(new DomainNotification(error.ErrorMessage));
+                }
+                return;
+            }
+
+            await _mediatorHandler.SendCommand(command);
+        }
+
+        public IEnumerable<PessoaViewModel> GetAll()
+        {
+            return _mapper.Map<List<PessoaViewModel>>(_repository.GetAll());
         }
     }
 }

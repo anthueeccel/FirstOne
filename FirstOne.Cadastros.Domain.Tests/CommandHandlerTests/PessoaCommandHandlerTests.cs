@@ -86,7 +86,7 @@ namespace FirstOne.Cadastros.Domain.Tests.CommandHandlerTests
             _mocker.GetMock<IPessoaRepository>().Verify(v => v.Update(It.IsAny<Pessoa>()), Times.Never);
         }
 
-        [Fact(DisplayName = "PessoaCommandHanler Update - falhar id")]
+        [Fact(DisplayName = "PessoaCommandHanler Update - falhar sem id")]
         public async Task deve_falhar_atualizar_sem_id()
         {
             //Arrange
@@ -102,5 +102,37 @@ namespace FirstOne.Cadastros.Domain.Tests.CommandHandlerTests
                            dn.Value == "Favor informar o Id.")), Times.Once);
             _mocker.GetMock<IPessoaRepository>().Verify(v => v.Update(It.IsAny<Pessoa>()), Times.Never);
         }
+
+        [Fact(DisplayName = "PessoaCommandHanler Remove")]
+        public async Task deve_remover()
+        {
+            //Arrange
+            var removePessoaCommand = new RemovePessoaCommand(Guid.NewGuid());
+
+            //Act
+            var result = await _commandHanler.Handle(removePessoaCommand, CancellationToken.None);
+
+            //Assert
+            Assert.True(result);
+            _mocker.GetMock<IPessoaRepository>().Verify(e => e.Remove(It.IsAny<Guid>()), Times.Once);
+        }
+
+        [Fact(DisplayName = "PessoaCommandHanler Remove = falhar sem id")]
+        public async Task deve_falhar_remover_sem_id()
+        {
+            //Arrange
+            var removePessoaCommand = new RemovePessoaCommand(Guid.Empty);
+
+            //Act
+            var result = await _commandHanler.Handle(removePessoaCommand, CancellationToken.None);
+
+            //Assert
+            Assert.False(result);
+            _mocker.GetMock<IMediatorHandler>().Verify(e =>
+                    e.PublishDomainNotification(It.Is<DomainNotification>(dn =>
+                           dn.Value == "Favor informar o Id.")), Times.Once);
+            _mocker.GetMock<IPessoaRepository>().Verify(v => v.Remove(It.IsAny<Guid>()), Times.Never);
+        }
+
     }
 }

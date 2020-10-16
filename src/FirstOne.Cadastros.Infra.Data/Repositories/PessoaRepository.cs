@@ -2,6 +2,7 @@
 using FirstOne.Cadastros.Domain.Interfaces;
 using FirstOne.Cadastros.Infra.Data.Context;
 using MongoDB.Driver;
+using System;
 using System.Collections.Generic;
 
 namespace FirstOne.Cadastros.Infra.Data.Repositories
@@ -28,6 +29,11 @@ namespace FirstOne.Cadastros.Infra.Data.Repositories
         public void Update(Pessoa pessoa)
         {
             _mongoDbContext.Pessoas.ReplaceOne(r => r.Id == pessoa.Id, pessoa);
+        }
+
+        public void Remove(Guid id)
+        {
+            _mongoDbContext.Pessoas.DeleteOne(r => r.Id == id);
         }
     }
 }

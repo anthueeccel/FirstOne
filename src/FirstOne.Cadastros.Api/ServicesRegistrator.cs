@@ -40,6 +40,7 @@ namespace FirstOne.Cadastros.Api
             //Domain - Commands
             services.AddScoped<IRequestHandler<AddPessoaCommand, bool>, PessoaCommandHandler>();
             services.AddScoped<IRequestHandler<UpdatePessoaCommand, bool>, PessoaCommandHandler>();
+            services.AddScoped<IRequestHandler<RemovePessoaCommand, bool>, PessoaCommandHandler>();
 
             //Infra - Data
             services.AddScoped<IPessoaRepository, PessoaRepository>();
