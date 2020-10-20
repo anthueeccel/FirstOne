@@ -26,7 +26,7 @@ namespace FirstOne.Cadastros.Infra.Data.Context
             }
             catch (Exception ex)
             {
-                throw new Exception("Não foi possível se conectar com o servidor.", ex);
+                throw new Exception("Unable connect to the server.", ex);
             }
         }
 
@@ -35,6 +35,14 @@ namespace FirstOne.Cadastros.Infra.Data.Context
             get
             {
                 return _database.GetCollection<Pessoa>("Pessoa");
+            }
+        }
+
+        public IMongoCollection<Usuario> Usuarios
+        {
+            get
+            {
+                return _database.GetCollection<Usuario>("Usuarios");
             }
         }
     }

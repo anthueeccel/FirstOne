@@ -4,6 +4,7 @@ using FirstOne.Cadastros.Application.Interfaces;
 using FirstOne.Cadastros.Application.Services;
 using FirstOne.Cadastros.Domain.CommandHandler;
 using FirstOne.Cadastros.Domain.Commands;
+using FirstOne.Cadastros.Domain.Commands.Usuario;
 using FirstOne.Cadastros.Domain.Interfaces;
 using FirstOne.Cadastros.Domain.Mediator;
 using FirstOne.Cadastros.Domain.Messaging;
@@ -36,14 +37,17 @@ namespace FirstOne.Cadastros.Api
 
             //Application
             services.AddScoped<IPessoaAppService, PessoaAppService>();
+            services.AddScoped<IUsuarioAppService, UsuarioAppService>();
 
             //Domain - Commands
-            services.AddScoped<IRequestHandler<AddPessoaCommand, bool>, PessoaCommandHandler>();
-            services.AddScoped<IRequestHandler<UpdatePessoaCommand, bool>, PessoaCommandHandler>();
-            services.AddScoped<IRequestHandler<RemovePessoaCommand, bool>, PessoaCommandHandler>();
+            services.AddScoped<IRequestHandler<AddPessoaCommand, Unit>, PessoaCommandHandler>();
+            services.AddScoped<IRequestHandler<UpdatePessoaCommand, Unit>, PessoaCommandHandler>();
+            services.AddScoped<IRequestHandler<RemovePessoaCommand, Unit>, PessoaCommandHandler>();
+            services.AddScoped<IRequestHandler<AddUsuarioCommand, Unit>, UsuarioCommandHandler>();
 
             //Infra - Data
             services.AddScoped<IPessoaRepository, PessoaRepository>();
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
         }
     }
 }

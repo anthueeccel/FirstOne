@@ -94,7 +94,7 @@ namespace FirstOne.Cadastros.Application.Tests
             //Assert
             _mocker.GetMock<IMediatorHandler>().Verify(e => 
                        e.PublishDomainNotification(It.Is<DomainNotification>(
-                           dm => dm.Value == "Favor informar o Nome.")), Times.Once);
+                           dm => dm.Value == string.Format(ValidationMessages.RequiredField, "Nome"))), Times.Once);
             _mocker.GetMock<IMediatorHandler>().Verify(e =>
                        e.SendCommand(It.IsAny<AddPessoaCommand>()), Times.Never);
         }
@@ -135,7 +135,7 @@ namespace FirstOne.Cadastros.Application.Tests
             //Assert
             _mocker.GetMock<IMediatorHandler>().Verify(e =>
                        e.PublishDomainNotification(It.Is<DomainNotification>(dn => 
-                            dn.Value == "Favor informar o Nome.")), Times.Once);
+                            dn.Value == string.Format(ValidationMessages.RequiredField, "Nome"))), Times.Once);
             _mocker.GetMock<IMediatorHandler>().Verify(e =>
                        e.SendCommand(It.IsAny<UpdatePessoaCommand>()), Times.Never);
         }
@@ -156,7 +156,7 @@ namespace FirstOne.Cadastros.Application.Tests
             //Assert
             _mocker.GetMock<IMediatorHandler>().Verify(e =>
                        e.PublishDomainNotification(It.Is<DomainNotification>(dn =>
-                            dn.Value == "Favor informar o Id.")), Times.Once);
+                            dn.Value == string.Format(ValidationMessages.RequiredField, "Id"))), Times.Once);
             _mocker.GetMock<IMediatorHandler>().Verify(e =>
                        e.SendCommand(It.IsAny<UpdatePessoaCommand>()), Times.Never);
         }
@@ -195,7 +195,7 @@ namespace FirstOne.Cadastros.Application.Tests
             //Assert
             _mocker.GetMock<IMediatorHandler>().Verify(e =>
                        e.PublishDomainNotification(It.Is<DomainNotification>(dn =>
-                            dn.Value == "Favor informar o Id.")), Times.Once);
+                            dn.Value == string.Format(ValidationMessages.RequiredField, "Id"))), Times.Once);
             _mocker.GetMock<IMediatorHandler>().Verify(e =>
                        e.SendCommand(It.IsAny<RemovePessoaCommand>()), Times.Never);
         }

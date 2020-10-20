@@ -10,6 +10,7 @@ namespace FirstOne.Cadastros.Application.AutoMapper
         public DomainToViewModelMappingProfile()
         {
             CreateMap<Pessoa, PessoaViewModel>();
+            CreateMap<Usuario, UsuarioViewModel>();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using FirstOne.Cadastros.Domain.Commands;
+using FirstOne.Cadastros.Domain.Messaging;
 using FluentValidation;
 
 namespace FirstOne.Cadastros.Domain.Validations
@@ -8,7 +9,7 @@ namespace FirstOne.Cadastros.Domain.Validations
         public AddPessoaCommandValidation()
         {
             RuleFor(p => p.Nome)
-                .NotEmpty().WithMessage("Favor informar o Nome.");
+                .NotEmpty().WithMessage(string.Format(ValidationMessages.RequiredField, "Nome"));
         }
     }
 }
