@@ -2,8 +2,10 @@
 using FirstOne.Cadastros.Application.Interfaces;
 using FirstOne.Cadastros.Application.ViewModels;
 using FirstOne.Cadastros.Domain.Commands.Usuario;
+using FirstOne.Cadastros.Domain.Entities;
 using FirstOne.Cadastros.Domain.Interfaces;
 using FirstOne.Cadastros.Domain.Mediator;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FirstOne.Cadastros.Application.Services
@@ -32,6 +34,11 @@ namespace FirstOne.Cadastros.Application.Services
             }
 
             await _mediatorHandler.SendCommand(command);
+        }
+
+        public IEnumerable<UsuarioViewModel> GetAll()
+        {
+            return _mapper.Map<List<UsuarioViewModel>>(_repository.GetAll());
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using FirstOne.Cadastros.Domain.Validations.Usuario;
+﻿using FirstOne.Cadastros.Domain.Entities;
+using FirstOne.Cadastros.Domain.Validations.Usuario;
 using System;
 
 namespace FirstOne.Cadastros.Domain.Commands.Usuario
@@ -8,6 +9,7 @@ namespace FirstOne.Cadastros.Domain.Commands.Usuario
         public string Email { get; }
         public string Senha { get; }
         public Guid PessoaId { get; }
+
 
         public AddUsuarioCommand(string email, string senha, Guid pessoaId)
         {
