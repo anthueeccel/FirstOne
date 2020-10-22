@@ -11,15 +11,15 @@ namespace FirstOne.Cadastros.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PessoaController : ControllerBase
+    public class PessoaController : Controller
     {
         private readonly IPessoaAppService _appService;
-        private readonly DomainNotificationHandler _domainNotificationHandler;
 
-        public PessoaController(IPessoaAppService appService, INotificationHandler<DomainNotification> notificationHandler)
+        public PessoaController(IPessoaAppService appService,
+                                INotificationHandler<DomainNotification> notificationHandler)
+            : base(notificationHandler)
         {
             _appService = appService;
-            _domainNotificationHandler = (DomainNotificationHandler)notificationHandler;
         }
 
         [HttpGet]
@@ -33,15 +33,7 @@ namespace FirstOne.Cadastros.Api.Controllers
         {
             await _appService.AddAsync(pessoaViewModel);
 
-            if (_domainNotificationHandler.HasNotification())
-            {
-                return UnprocessableEntity(new
-                {
-                    errors = _domainNotificationHandler.GetNotifications()
-                });
-            }
-
-            return Ok();
+            return CustomResponse();
         }
 
         [HttpPut]
@@ -49,15 +41,7 @@ namespace FirstOne.Cadastros.Api.Controllers
         {
             await _appService.UpdateAsync(pessoa);
 
-            if (_domainNotificationHandler.HasNotification())
-            {
-                return UnprocessableEntity(new
-                {
-                    errors = _domainNotificationHandler.GetNotifications()
-                });
-            }
-
-            return Ok();
+            return CustomResponse();
         }
 
         [HttpDelete("{id}")]
@@ -65,15 +49,7 @@ namespace FirstOne.Cadastros.Api.Controllers
         {
             await _appService.RemoveAsync(id);
 
-            if (_domainNotificationHandler.HasNotification())
-            {
-                return UnprocessableEntity(new
-                {
-                    errors = _domainNotificationHandler.GetNotifications()
-                });
-            }
-
-            return Ok();
+            return CustomResponse();
         }
 
         [HttpGet("{id}")]

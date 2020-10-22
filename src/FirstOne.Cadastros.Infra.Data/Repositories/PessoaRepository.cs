@@ -1,44 +1,47 @@
 ﻿using FirstOne.Cadastros.Domain.Entities;
 using FirstOne.Cadastros.Domain.Interfaces;
 using FirstOne.Cadastros.Infra.Data.Context;
-using MongoDB.Driver;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FirstOne.Cadastros.Infra.Data.Repositories
 {
     public class PessoaRepository : IPessoaRepository
     {
-        private readonly MongoDbContext _mongoDbContext;
+        private SqlServerContext _context;
 
-        public PessoaRepository()
+        public PessoaRepository(SqlServerContext context)
         {
-            _mongoDbContext = new MongoDbContext();
-        }
-
-        public IEnumerable<Pessoa> GetAll()
-        {
-            return _mongoDbContext.Pessoas.Find(p => true).ToList();
+            _context = context;
         }
 
         public void Add(Pessoa pessoa)
         {
-            _mongoDbContext.Pessoas.InsertOne(pessoa);
+            _context.Pessoa.Add(pessoa);
+            _context.SaveChanges();
         }
 
-        public void Update(Pessoa pessoa)
+        public IEnumerable<Pessoa> GetAll()
         {
-            _mongoDbContext.Pessoas.ReplaceOne(r => r.Id == pessoa.Id, pessoa);
-        }
-
-        public void Remove(Guid id)
-        {
-            _mongoDbContext.Pessoas.DeleteOne(r => r.Id == id);
+            return _context.Pessoa.AsNoTracking().ToList();
         }
 
         public Pessoa GetById(Guid id)
         {
-            return _mongoDbContext.Pessoas.Find(g => g.Id == id).FirstOrDefault();
+            return _context.Pessoa.AsNoTracking().FirstOrDefault(x => x.Id == id);
+        }
+
+        public void Remove(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Update(Pessoa pessoa)
+        {
+            _context.Pessoa.Update(pessoa);
+            _context.SaveChanges();
         }
     }
 }

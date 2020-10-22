@@ -2,15 +2,17 @@
 
 namespace FirstOne.Cadastros.Domain.Entities
 {
-    public class Pessoa
+    public class Pessoa : EntidadeBase
     {
-        public Guid Id { get; }
-        public string Nome { get; }
+        public string Nome { get; private set; }
+
 
         public Pessoa(Guid id, string nome)
         {
             Id = id;
             Nome = nome;
         }
+
+        protected Pessoa() { }
     }
 }

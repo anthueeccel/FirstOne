@@ -11,19 +11,17 @@ using System.Threading.Tasks;
 
 namespace FirstOne.Cadastros.Application.Services
 {
-    public class PessoaAppService : IPessoaAppService
+    public class PessoaAppService : AppService, IPessoaAppService
     {
         private readonly IMapper _mapper;
         private readonly IPessoaRepository _repository;
-        private readonly IMediatorHandler _mediatorHandler;
 
         public PessoaAppService(IPessoaRepository repository,
                                 IMapper mapper,
-                                IMediatorHandler mediatorHandler)
+                                IMediatorHandler mediatorHandler) : base(mediatorHandler)
         {
             _repository = repository;
             _mapper = mapper;
-            _mediatorHandler = mediatorHandler;
         }
 
         public async Task AddAsync(PessoaViewModel pessoaViewModel)
@@ -32,7 +30,7 @@ namespace FirstOne.Cadastros.Application.Services
 
             if (!command.IsValid())
             {
-                await RaiseValidationError(command);
+                await RaiseCommandValidationErrors(command);
                 return;
             }
 
@@ -45,7 +43,7 @@ namespace FirstOne.Cadastros.Application.Services
 
             if (!command.IsValid())
             {
-                await RaiseValidationError(command);
+                await RaiseCommandValidationErrors(command);
                 return;
             }
 
@@ -58,7 +56,7 @@ namespace FirstOne.Cadastros.Application.Services
 
             if (!command.IsValid())
             {
-                await RaiseValidationError(command);
+                await RaiseCommandValidationErrors(command);
                 return;
             }
 
@@ -73,14 +71,6 @@ namespace FirstOne.Cadastros.Application.Services
         public PessoaViewModel GetById(Guid id)
         {
             return _mapper.Map<PessoaViewModel>(_repository.GetById(id));
-        }
-
-        private async Task RaiseValidationError(Command command)
-        {
-            foreach (var error in command.ValidationResult.Errors)
-            {
-                await _mediatorHandler.PublishDomainNotification(new DomainNotification(error.ErrorMessage));
-            }
-        }
+        }      
     }
 }
