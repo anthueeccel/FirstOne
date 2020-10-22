@@ -36,6 +36,7 @@ namespace FirstOne.Cadastros.Api
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

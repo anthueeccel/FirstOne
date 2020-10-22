@@ -2,6 +2,7 @@
 using FirstOne.Cadastros.Application.AutoMapper;
 using FirstOne.Cadastros.Application.Interfaces;
 using FirstOne.Cadastros.Application.Services;
+using FirstOne.Cadastros.Application.Token;
 using FirstOne.Cadastros.Domain.CommandHandler;
 using FirstOne.Cadastros.Domain.Commands;
 using FirstOne.Cadastros.Domain.Commands.Usuario;
@@ -11,9 +12,12 @@ using FirstOne.Cadastros.Domain.Messaging;
 using FirstOne.Cadastros.Infra.Data.Context;
 using FirstOne.Cadastros.Infra.Data.Repositories;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace FirstOne.Cadastros.Api
 {
@@ -21,11 +25,31 @@ namespace FirstOne.Cadastros.Api
     {
         public static void RegisterService(IServiceCollection services, IConfiguration configuration)
         {
-            //MongoDb
-            //MongoDbContext.ConnectionString = configuration.GetSection("MongoConnection:ConnectionString").Value;
-            //MongoDbContext.DatabaseName = configuration.GetSection("MongoConnection:Database").Value;
-            //MongoDbContext.IsSSL = Convert.ToBoolean(configuration.GetSection("MongoConnection:IsSSL").Value);
-            services.AddMvc();
+            //services.AddMvc();
+
+            //Token settings
+            var tokenSettingsSection = configuration.GetSection("TokenSettings");
+            services.Configure<TokenSettings>(tokenSettingsSection);
+            var tokenSettings = tokenSettingsSection.Get<TokenSettings>();
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = true;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(tokenSettings.Secret)),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidIssuer = tokenSettings.Issuer,
+                    ValidAudience = tokenSettings.Audience
+                };
+            });
 
             //AutoMapper
             services.AddAutoMapper(typeof(DomainToViewModelMappingProfile));

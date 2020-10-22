@@ -2,11 +2,13 @@ using AutoMapper;
 using FirstOne.Cadastros.Application.AutoMapper;
 using FirstOne.Cadastros.Application.Interfaces;
 using FirstOne.Cadastros.Application.Services;
+using FirstOne.Cadastros.Application.Token;
 using FirstOne.Cadastros.Application.ViewModels;
 using FirstOne.Cadastros.Domain.Commands.Usuario;
 using FirstOne.Cadastros.Domain.Interfaces;
 using FirstOne.Cadastros.Domain.Mediator;
 using FirstOne.Cadastros.Domain.Messaging;
+using Microsoft.Extensions.Options;
 using Moq;
 using Moq.AutoMock;
 using System;
@@ -30,8 +32,12 @@ namespace FirstOne.Cadastros.Application.Tests
 
             var usuarioRepository = _mocker.GetMock<IUsuarioRepository>();
             var mediatorHandler = _mocker.GetMock<IMediatorHandler>();
+            var tokenSettings = _mocker.GetMock<IOptions<TokenSettings>>();
 
-            _usuarioAppService = new UsuarioAppService(usuarioRepository.Object, mapper, mediatorHandler.Object);
+            _usuarioAppService = new UsuarioAppService(usuarioRepository.Object,
+                                                       mapper,
+                                                       mediatorHandler.Object,
+                                                       tokenSettings.Object);
         }
 
         //[Fact(DisplayName = "GetAll deve listar usuarios")]
