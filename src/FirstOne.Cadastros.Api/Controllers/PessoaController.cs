@@ -2,6 +2,7 @@
 using FirstOne.Cadastros.Application.ViewModels;
 using FirstOne.Cadastros.Domain.Messaging;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,8 +10,7 @@ using System.Threading.Tasks;
 
 namespace FirstOne.Cadastros.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Authorize]   
     public class PessoaController : Controller
     {
         private readonly IPessoaAppService _appService;

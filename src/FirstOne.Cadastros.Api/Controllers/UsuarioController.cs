@@ -2,20 +2,20 @@
 using FirstOne.Cadastros.Application.ViewModels;
 using FirstOne.Cadastros.Domain.Messaging;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FirstOne.Cadastros.Api.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    [Authorize]    
     public class UsuarioController : Controller
     {
         private readonly IUsuarioAppService _appService;
 
         public UsuarioController(IUsuarioAppService appService,
-                                 INotificationHandler<DomainNotification> notificationHandler) 
+                                 INotificationHandler<DomainNotification> notificationHandler)
             : base(notificationHandler)
         {
             _appService = appService;
@@ -33,6 +33,18 @@ namespace FirstOne.Cadastros.Api.Controllers
         public IEnumerable<UsuarioViewModel> GetAll()
         {
             return _appService.GetAll();
+        }
+
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public IActionResult Login([FromBody] LoginViewModel loginViewModel)
+        {
+            var token = _appService.Login(loginViewModel.Email, loginViewModel.Senha);
+
+            if (token == null)
+                return Unauthorized();
+
+            return Ok(new { token });
         }
     }
 }
