@@ -1,6 +1,6 @@
 ﻿namespace FirstOne.Cadastros.Domain.Enums
 {
-    public enum Rotinas
+    public enum EntidadeEnum
     {
         Pessoa,
         Usuario
