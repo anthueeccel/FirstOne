@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace FirstOne.Cadastros.Api.Controllers
 {
-    [Authorize]   
+    [Authorize]
     public class PessoaController : Controller
     {
         private readonly IPessoaAppService _appService;
@@ -29,6 +29,7 @@ namespace FirstOne.Cadastros.Api.Controllers
         }
 
         [HttpPost]
+        [ClaimsAuthorization("Pessoa", "Add")]
         public async Task<IActionResult> Add([FromBody] PessoaViewModel pessoaViewModel)
         {
             await _appService.AddAsync(pessoaViewModel);
@@ -37,6 +38,7 @@ namespace FirstOne.Cadastros.Api.Controllers
         }
 
         [HttpPut]
+        [ClaimsAuthorization("Pessoa", "Update")]
         public async Task<IActionResult> Update([FromBody] PessoaViewModel pessoa)
         {
             await _appService.UpdateAsync(pessoa);
@@ -45,6 +47,7 @@ namespace FirstOne.Cadastros.Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ClaimsAuthorization("Pessoa", "Remove")]
         public async Task<IActionResult> Remove(Guid id)
         {
             await _appService.RemoveAsync(id);

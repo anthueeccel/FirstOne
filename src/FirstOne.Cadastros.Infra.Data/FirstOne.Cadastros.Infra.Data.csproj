@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FirstOne.Cadastros.Application\FirstOne.Cadastros.Application.csproj" />
     <ProjectReference Include="..\FirstOne.Cadastros.Domain\FirstOne.Cadastros.Domain.csproj" />
   </ItemGroup>
 

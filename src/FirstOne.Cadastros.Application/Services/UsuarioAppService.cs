@@ -71,6 +71,13 @@ namespace FirstOne.Cadastros.Application.Services
                 new Claim(ClaimTypes.Email, usuario.Email)
             };
 
+            var permissions = _repository.GetPermissoes(usuario.Id);
+
+            foreach (var permission in permissions)
+            {
+                claims.Add(new Claim(permission.EntidadeEnum.ToString(), permission.EndPoint));
+            }
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var claimsIdentity = new ClaimsIdentity();
             claimsIdentity.AddClaims(claims);
@@ -86,6 +93,32 @@ namespace FirstOne.Cadastros.Application.Services
             });
 
             return tokenHandler.WriteToken(token);
+        }
+
+        public void AdicionarPermissao(UsuarioPermissaoViewModel usuarioPermissaoViewModel)
+        {
+            foreach (var permissao in usuarioPermissaoViewModel.Permissions)
+            {
+                _repository.AdicionarPermissao(usuarioPermissaoViewModel.UserId, permissao.Entidade, string.Join(",", permissao.EndPoints));
+
+            }
+        }
+
+        public UsuarioPermissaoViewModel GetPermissoes(Guid usuarioId)
+        {
+            var permissoes = _repository.GetPermissoes(usuarioId);
+
+            var usuarioPermissaoViewModel = new List<PermissionsViewModel>();
+
+            foreach (var permissao in permissoes)
+            {
+                usuarioPermissaoViewModel.Add(new PermissionsViewModel()
+                {
+                    Entidade = permissao.EntidadeEnum,
+                    EndPoints = permissao.EndPoint.Split(",".ToCharArray())
+                });
+            }
+            return new UsuarioPermissaoViewModel() { UserId = usuarioId, Permissions = usuarioPermissaoViewModel };
         }
     }
 }
