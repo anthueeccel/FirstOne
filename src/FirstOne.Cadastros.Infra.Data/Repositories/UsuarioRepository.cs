@@ -1,6 +1,4 @@
-﻿using FirstOne.Cadastros.Application.ViewModels;
-using FirstOne.Cadastros.Domain.Entities;
-using FirstOne.Cadastros.Domain.Enums;
+﻿using FirstOne.Cadastros.Domain.Entities;
 using FirstOne.Cadastros.Domain.Interfaces;
 using FirstOne.Cadastros.Infra.Data.Context;
 using Microsoft.EntityFrameworkCore;
@@ -37,33 +35,20 @@ namespace FirstOne.Cadastros.Infra.Data.Repositories
         {
             return _context.Usuario
                 .AsNoTracking()
+                .Include(x => x.usuarioClaims)
                 .Where(predicate)
                 .ToList();
         }
 
-        public IEnumerable<UsuarioPermissao> GetPermissoes(Guid usuarioId)
+        public void AdicionarClaim(UsuarioClaim usuarioClaim)
         {
-            return _context.UsuarioPermissao
-                .AsNoTracking()
-                .Where(x => x.UsuarioId == usuarioId)
-                .ToList();
+            _context.UsuarioClaim.Add(usuarioClaim);
+            _context.SaveChanges();
         }
 
-        public void AdicionarPermissao(Guid usuarioId, EntidadeEnum rotina, string valor)
+        public void RemoverClaims(UsuarioClaim usuarioClaim)
         {
-            var permissaoDb = _context.UsuarioPermissao.AsNoTracking().Where(x => x.Id == usuarioId && x.EntidadeEnum == rotina).FirstOrDefault();
-
-            if (permissaoDb == null)
-            {
-
-                var permissaoUsuario = new UsuarioPermissao(Guid.NewGuid(), usuarioId, rotina, valor);
-                _context.UsuarioPermissao.Add(permissaoUsuario);
-            }
-            else
-            {
-                var permissaoUsuario = new UsuarioPermissao(Guid.NewGuid(), usuarioId, rotina, valor);
-                _context.UsuarioPermissao.Update(permissaoUsuario);
-            }
+            _context.UsuarioClaim.Remove(usuarioClaim);
             _context.SaveChanges();
         }
     }

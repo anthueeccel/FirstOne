@@ -23,14 +23,15 @@ namespace FirstOne.Cadastros.Api.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<PessoaViewModel> GetAll()
+        public IEnumerable<PessoaViewModel> ObterTodos()
         {
             return _appService.GetAll();
         }
-
+           
+        [AllowAnonymous]
         [HttpPost]
-        [ClaimsAuthorization("Pessoa", "Add")]
-        public async Task<IActionResult> Add([FromBody] PessoaViewModel pessoaViewModel)
+        //[ClaimsAuthorization("Pessoa", "Add")]
+        public async Task<IActionResult> Adicionar([FromBody] PessoaViewModel pessoaViewModel)
         {
             await _appService.AddAsync(pessoaViewModel);
 
@@ -39,7 +40,7 @@ namespace FirstOne.Cadastros.Api.Controllers
 
         [HttpPut]
         [ClaimsAuthorization("Pessoa", "Update")]
-        public async Task<IActionResult> Update([FromBody] PessoaViewModel pessoa)
+        public async Task<IActionResult> Atualizar([FromBody] PessoaViewModel pessoa)
         {
             await _appService.UpdateAsync(pessoa);
 
@@ -48,7 +49,7 @@ namespace FirstOne.Cadastros.Api.Controllers
 
         [HttpDelete("{id}")]
         [ClaimsAuthorization("Pessoa", "Remove")]
-        public async Task<IActionResult> Remove(Guid id)
+        public async Task<IActionResult> Remover(Guid id)
         {
             await _appService.RemoveAsync(id);
 
@@ -56,7 +57,7 @@ namespace FirstOne.Cadastros.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public PessoaViewModel GetById(Guid id)
+        public PessoaViewModel ObterPorId(Guid id)
         {
             return _appService.GetById(id);
         }

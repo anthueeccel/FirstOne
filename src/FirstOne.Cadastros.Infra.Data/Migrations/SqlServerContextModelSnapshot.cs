@@ -55,13 +55,13 @@ namespace FirstOne.Cadastros.Infra.Data.Migrations
                     b.ToTable("Usuario");
                 });
 
-            modelBuilder.Entity("FirstOne.Cadastros.Domain.Entities.UsuarioPermissao", b =>
+            modelBuilder.Entity("FirstOne.Cadastros.Domain.Entities.UsuarioClaim", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("EndPoint")
+                    b.Property<string>("Endpoint")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("EntidadeEnum")
@@ -74,7 +74,7 @@ namespace FirstOne.Cadastros.Infra.Data.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("UsuarioPermissao");
+                    b.ToTable("UsuarioClaim");
                 });
 
             modelBuilder.Entity("FirstOne.Cadastros.Domain.Entities.Usuario", b =>
@@ -86,10 +86,10 @@ namespace FirstOne.Cadastros.Infra.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FirstOne.Cadastros.Domain.Entities.UsuarioPermissao", b =>
+            modelBuilder.Entity("FirstOne.Cadastros.Domain.Entities.UsuarioClaim", b =>
                 {
                     b.HasOne("FirstOne.Cadastros.Domain.Entities.Usuario", "Usuario")
-                        .WithMany()
+                        .WithMany("usuarioClaims")
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

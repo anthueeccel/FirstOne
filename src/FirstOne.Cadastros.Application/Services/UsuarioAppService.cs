@@ -71,17 +71,17 @@ namespace FirstOne.Cadastros.Application.Services
                 new Claim(ClaimTypes.Email, usuario.Email)
             };
 
-            var permissions = _repository.GetPermissoes(usuario.Id);
-
-            foreach (var permission in permissions)
+            foreach (var claim in usuario.usuarioClaims)
             {
-                claims.Add(new Claim(permission.EntidadeEnum.ToString(), permission.EndPoint));
+                claims.Add(new Claim(Convert.ToString(claim.EntidadeEnum), claim.Endpoint));
             }
+            //Pode-se usar AddRange
+            //claims.AddRange(usuario.usuarioClaims.Select(claim => new Claim(Convert.ToString(claim.EntidadeEnum), claim.Endpoint)));
 
-            var tokenHandler = new JwtSecurityTokenHandler();
             var claimsIdentity = new ClaimsIdentity();
             claimsIdentity.AddClaims(claims);
 
+            var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(new SecurityTokenDescriptor
             {
                 Issuer = _tokenSettings.Issuer,
@@ -95,30 +95,26 @@ namespace FirstOne.Cadastros.Application.Services
             return tokenHandler.WriteToken(token);
         }
 
-        public void AdicionarPermissao(UsuarioPermissaoViewModel usuarioPermissaoViewModel)
+        public void AdicionarClaim(UsuarioClaimViewModel usuarioClaimViewModel)
         {
-            foreach (var permissao in usuarioPermissaoViewModel.Permissions)
+            var usuario = _repository
+                            .Search(x => x.Id == usuarioClaimViewModel.UsuarioId)
+                            .FirstOrDefault();
+
+            foreach (var claim in usuario.usuarioClaims.ToList())
             {
-                _repository.AdicionarPermissao(usuarioPermissaoViewModel.UserId, permissao.Entidade, string.Join(",", permissao.EndPoints));
-
+                _repository.RemoverClaims(claim);
             }
-        }
 
-        public UsuarioPermissaoViewModel GetPermissoes(Guid usuarioId)
-        {
-            var permissoes = _repository.GetPermissoes(usuarioId);
 
-            var usuarioPermissaoViewModel = new List<PermissionsViewModel>();
-
-            foreach (var permissao in permissoes)
+            foreach (var claim in usuarioClaimViewModel.UsuarioClaims)
             {
-                usuarioPermissaoViewModel.Add(new PermissionsViewModel()
-                {
-                    Entidade = permissao.EntidadeEnum,
-                    EndPoints = permissao.EndPoint.Split(",".ToCharArray())
-                });
+                _repository.AdicionarClaim(new UsuarioClaim(Guid.NewGuid(),
+                                                  usuarioClaimViewModel.UsuarioId,
+                                                  claim.Entidade,
+                                                  claim.EndPoint));
             }
-            return new UsuarioPermissaoViewModel() { UserId = usuarioId, Permissions = usuarioPermissaoViewModel };
+
         }
     }
 }

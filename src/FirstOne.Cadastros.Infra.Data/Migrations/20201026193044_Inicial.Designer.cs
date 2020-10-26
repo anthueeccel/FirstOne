@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FirstOne.Cadastros.Infra.Data.Migrations
 {
     [DbContext(typeof(SqlServerContext))]
-    [Migration("20201021200156_Inicial")]
+    [Migration("20201026193044_Inicial")]
     partial class Inicial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -57,11 +57,42 @@ namespace FirstOne.Cadastros.Infra.Data.Migrations
                     b.ToTable("Usuario");
                 });
 
+            modelBuilder.Entity("FirstOne.Cadastros.Domain.Entities.UsuarioClaim", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Endpoint")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EntidadeEnum")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("UsuarioClaim");
+                });
+
             modelBuilder.Entity("FirstOne.Cadastros.Domain.Entities.Usuario", b =>
                 {
                     b.HasOne("FirstOne.Cadastros.Domain.Entities.Pessoa", "Pessoa")
                         .WithMany()
                         .HasForeignKey("PessoaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FirstOne.Cadastros.Domain.Entities.UsuarioClaim", b =>
+                {
+                    b.HasOne("FirstOne.Cadastros.Domain.Entities.Usuario", "Usuario")
+                        .WithMany("usuarioClaims")
+                        .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

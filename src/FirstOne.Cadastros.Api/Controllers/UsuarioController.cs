@@ -53,16 +53,10 @@ namespace FirstOne.Cadastros.Api.Controllers
 
         [HttpPost("permissoes")]
         //[ClaimsAuthorization("Usuario", "Add")]
-        public IActionResult AdicionarPermissao([FromBody] UsuarioPermissaoViewModel usuarioPermissaoViewModel)
+        public IActionResult AdicionarClaim([FromBody] UsuarioClaimViewModel usuarioPermissaoViewModel)
         {
-            _appService.AdicionarPermissao(usuarioPermissaoViewModel);
+            _appService.AdicionarClaim(usuarioPermissaoViewModel);
             return Ok();
-        }
-
-        [HttpGet("permissoes/{usuarioId}")]
-        public UsuarioPermissaoViewModel GetPermissao([FromBody] Guid usuarioId)
-        {
-            return _appService.GetPermissoes(usuarioId);
-        }
+        }        
     }
 }

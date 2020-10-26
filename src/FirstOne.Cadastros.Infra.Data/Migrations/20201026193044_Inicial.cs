@@ -39,14 +39,42 @@ namespace FirstOne.Cadastros.Infra.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "UsuarioClaim",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(nullable: false),
+                    UsuarioId = table.Column<Guid>(nullable: false),
+                    EntidadeEnum = table.Column<int>(nullable: false),
+                    Endpoint = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UsuarioClaim", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UsuarioClaim_Usuario_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "Usuario",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Usuario_PessoaId",
                 table: "Usuario",
                 column: "PessoaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsuarioClaim_UsuarioId",
+                table: "UsuarioClaim",
+                column: "UsuarioId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "UsuarioClaim");
+
             migrationBuilder.DropTable(
                 name: "Usuario");
 
