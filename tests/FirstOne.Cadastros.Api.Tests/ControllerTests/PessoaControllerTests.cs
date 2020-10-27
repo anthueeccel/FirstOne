@@ -35,7 +35,7 @@ namespace FirstOne.Cadastros.Api.Tests
             };
             _mocker.GetMock<IPessoaAppService>().Setup(e => e.GetAll()).Returns(pessoas);
 
-            var result = _controller.GetAll();
+            var result = _controller.ObterTodos();
 
             Assert.Single(result);
         }
@@ -57,7 +57,7 @@ namespace FirstOne.Cadastros.Api.Tests
             _mocker.GetMock<DomainNotificationHandler>().Setup(e => e.HasNotification()).Returns(true);
             _mocker.GetMock<DomainNotificationHandler>().Setup(e => e.GetNotifications()).Returns(notifications);
 
-            var result = await _controller.Add(pessoa);
+            var result = await _controller.Adicionar(pessoa);
 
             var erro = result as UnprocessableEntityObjectResult;
             Assert.NotNull(erro);
@@ -77,7 +77,7 @@ namespace FirstOne.Cadastros.Api.Tests
             _mocker.GetMock<DomainNotificationHandler>().Setup(e => e.HasNotification()).Returns(false);
 
             //Act
-            var result = await _controller.Add(pessoa);
+            var result = await _controller.Adicionar(pessoa);
 
             //Assert
             var ok = result as OkResult;
@@ -99,7 +99,7 @@ namespace FirstOne.Cadastros.Api.Tests
             _mocker.GetMock<DomainNotificationHandler>().Setup(e => e.HasNotification()).Returns(false);
 
             //Act
-            var result = await _controller.Update(pessoa);
+            var result = await _controller.Atualizar(pessoa);
 
             //Assert
             _mocker.GetMock<DomainNotificationHandler>().Verify(dn => dn.HasNotification(), Times.Once);
@@ -129,7 +129,7 @@ namespace FirstOne.Cadastros.Api.Tests
             _mocker.GetMock<DomainNotificationHandler>().Setup(e => e.GetNotifications()).Returns(notifications);
 
             //Act
-            var result = await _controller.Update(pessoa);
+            var result = await _controller.Atualizar(pessoa);
 
             //Assert
             _mocker.GetMock<IPessoaAppService>().Verify(v => v.UpdateAsync(It.IsAny<PessoaViewModel>()), Times.Once);
@@ -153,7 +153,7 @@ namespace FirstOne.Cadastros.Api.Tests
             _mocker.GetMock<DomainNotificationHandler>().Setup(e => e.HasNotification()).Returns(false);
 
             //Act
-            var result = await _controller.Remove(pessoa.Id);
+            var result = await _controller.Remover(pessoa.Id);
 
             //Assert
             _mocker.GetMock<DomainNotificationHandler>().Verify(dn => dn.HasNotification(), Times.Once);
@@ -182,7 +182,7 @@ namespace FirstOne.Cadastros.Api.Tests
             _mocker.GetMock<DomainNotificationHandler>().Setup(e => e.GetNotifications()).Returns(notifications);
 
             //Act
-            var result = await _controller.Remove(pessoa.Id);
+            var result = await _controller.Remover(pessoa.Id);
 
             //Assert
             _mocker.GetMock<IPessoaAppService>().Verify(v => v.RemoveAsync(It.IsAny<Guid>()), Times.Once);

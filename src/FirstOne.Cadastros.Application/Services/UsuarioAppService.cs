@@ -95,7 +95,7 @@ namespace FirstOne.Cadastros.Application.Services
             return tokenHandler.WriteToken(token);
         }
 
-        public void AdicionarClaim(UsuarioClaimViewModel usuarioClaimViewModel)
+        public void AtualizarClaims(UsuarioClaimViewModel usuarioClaimViewModel)
         {
             var usuario = _repository
                             .Search(x => x.Id == usuarioClaimViewModel.UsuarioId)

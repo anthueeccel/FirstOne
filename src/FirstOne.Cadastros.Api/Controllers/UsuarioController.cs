@@ -51,11 +51,11 @@ namespace FirstOne.Cadastros.Api.Controllers
             return Ok(new { token });
         }
 
-        [HttpPost("permissoes")]
+        [HttpPost("claims")]
         //[ClaimsAuthorization("Usuario", "Add")]
-        public IActionResult AdicionarClaim([FromBody] UsuarioClaimViewModel usuarioPermissaoViewModel)
+        public IActionResult AtualizarClaims([FromBody] UsuarioClaimViewModel usuarioPermissaoViewModel)
         {
-            _appService.AdicionarClaim(usuarioPermissaoViewModel);
+            _appService.AtualizarClaims(usuarioPermissaoViewModel);
             return Ok();
         }        
     }
