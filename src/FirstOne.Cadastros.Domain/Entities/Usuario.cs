@@ -11,7 +11,7 @@ namespace FirstOne.Cadastros.Domain.Entities
         public virtual Pessoa Pessoa { get; private set; }
 
         private readonly List<UsuarioClaim> _usuarioClaims;
-        public IReadOnlyCollection<UsuarioClaim> usuarioClaims => _usuarioClaims;
+        public IReadOnlyCollection<UsuarioClaim> UsuarioClaims => _usuarioClaims;
 
 
         public Usuario(Guid id, string email, string senha, Guid pessoaId)

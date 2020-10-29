@@ -9,25 +9,21 @@ using System.Linq.Expressions;
 
 namespace FirstOne.Cadastros.Infra.Data.Repositories
 {
-    public class UsuarioRepository : IUsuarioRepository
+    public class UsuarioRepository : Repository, IUsuarioRepository
     {
-        private SqlServerContext _context;
-
-        public UsuarioRepository(SqlServerContext context)
-        {
-            _context = context;
-        }
+        public UsuarioRepository(SqlServerContext context) : base(context) { }
 
         public void Add(Usuario usuario)
         {
             _context.Usuario.Add(usuario);
-            _context.SaveChanges();
         }
 
         public IEnumerable<Usuario> GetAll()
         {
-            return _context.Usuario.AsNoTracking()
+            return _context.Usuario
+                .AsNoTracking()
                 .Include(x => x.Pessoa)
+                .Include(x => x.UsuarioClaims)
                 .ToList();
         }
 
@@ -35,7 +31,7 @@ namespace FirstOne.Cadastros.Infra.Data.Repositories
         {
             return _context.Usuario
                 .AsNoTracking()
-                .Include(x => x.usuarioClaims)
+                .Include(x => x.UsuarioClaims)
                 .Where(predicate)
                 .ToList();
         }
@@ -43,13 +39,11 @@ namespace FirstOne.Cadastros.Infra.Data.Repositories
         public void AdicionarClaim(UsuarioClaim usuarioClaim)
         {
             _context.UsuarioClaim.Add(usuarioClaim);
-            _context.SaveChanges();
         }
 
         public void RemoverClaims(UsuarioClaim usuarioClaim)
         {
             _context.UsuarioClaim.Remove(usuarioClaim);
-            _context.SaveChanges();
         }
     }
 }

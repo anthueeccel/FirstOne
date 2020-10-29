@@ -28,37 +28,15 @@ namespace FirstOne.Cadastros.Domain.Tests.CommandHandlerTests
             //Arrange
             var addUsuarioCommand = new AddUsuarioCommand("Teste Usuario", "1234", Guid.NewGuid());
 
+            _mocker.GetMock<IUsuarioRepository>()
+               .Setup(e => e.UnitOfWork)
+               .Returns(_mocker.GetMock<IUnitOfWork>().Object);
+
             //Act
             var result = await _commandHanler.Handle(addUsuarioCommand, CancellationToken.None);
 
             //Assert
             _mocker.GetMock<IUsuarioRepository>().Verify(e => e.Add(It.IsAny<Usuario>()), Times.Once);
-        }
-
-        //[Fact(DisplayName = "PessoaCommandHanler Update")]
-        //public async Task deve_atualizar()
-        //{
-        //    //Arrange
-        //    var updatePessoaCommand = new UpdatePessoaCommand(Guid.NewGuid(), "Teste");
-
-        //    //Act
-        //    var result = await _commandHanler.Handle(updatePessoaCommand, CancellationToken.None);
-
-        //    //Assert
-        //    _mocker.GetMock<IPessoaRepository>().Verify(e => e.Update(It.IsAny<Pessoa>()), Times.Once);
-        //}
-
-        //[Fact(DisplayName = "PessoaCommandHanler Remove")]
-        //public async Task deve_remover()
-        //{
-        //    //Arrange
-        //    var removePessoaCommand = new RemovePessoaCommand(Guid.NewGuid());
-
-        //    //Act
-        //    var result = await _commandHanler.Handle(removePessoaCommand, CancellationToken.None);
-
-        //    //Assert
-        //    _mocker.GetMock<IPessoaRepository>().Verify(e => e.Remove(It.IsAny<Guid>()), Times.Once);
-        //}
+        }        
     }
 }

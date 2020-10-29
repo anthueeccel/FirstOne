@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace FirstOne.Cadastros.Application.ViewModels
 {
@@ -9,5 +10,6 @@ namespace FirstOne.Cadastros.Application.ViewModels
         public string Senha { get; set; }
         public Guid PessoaId { get; set; }
         public PessoaViewModel Pessoa { get; set; }
+        public IEnumerable<ClaimViewModel> UsuarioClaims { get; set; }
     }
 }

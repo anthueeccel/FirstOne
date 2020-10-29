@@ -4,13 +4,12 @@ using FirstOne.Cadastros.Domain.Messaging;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FirstOne.Cadastros.Api.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class UsuarioController : Controller
     {
         private readonly IUsuarioAppService _appService;
@@ -24,7 +23,7 @@ namespace FirstOne.Cadastros.Api.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        //[ClaimsAuthorization("Usuario", "Remove")]
+        [ClaimsAuthorization("Usuario", "Add")]
         public async Task<IActionResult> Add([FromBody] UsuarioViewModel usuarioViewModel)
         {
             await _appService.AddAsync(usuarioViewModel);
@@ -33,7 +32,7 @@ namespace FirstOne.Cadastros.Api.Controllers
         }
 
         [HttpGet]
-        //[ClaimsAuthorization("Usuario", "Remove")]
+        [ClaimsAuthorization("Usuario", "GetAll")]
         public IEnumerable<UsuarioViewModel> GetAll()
         {
             return _appService.GetAll();
@@ -52,11 +51,11 @@ namespace FirstOne.Cadastros.Api.Controllers
         }
 
         [HttpPost("claims")]
-        //[ClaimsAuthorization("Usuario", "Add")]
-        public IActionResult AtualizarClaims([FromBody] UsuarioClaimViewModel usuarioPermissaoViewModel)
+        [ClaimsAuthorization("Usuario", "Claims")]
+        public async Task<IActionResult> AtualizarClaims([FromBody] UsuarioClaimViewModel usuarioPermissaoViewModel)
         {
-            _appService.AtualizarClaims(usuarioPermissaoViewModel);
+            await _appService.AtualizarClaims(usuarioPermissaoViewModel);
             return Ok();
-        }        
+        }
     }
 }

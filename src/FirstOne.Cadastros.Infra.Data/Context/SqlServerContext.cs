@@ -1,11 +1,13 @@
 ﻿using FirstOne.Cadastros.Domain.Entities;
 using FirstOne.Cadastros.Domain.Enums;
+using FirstOne.Cadastros.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Threading.Tasks;
 
 namespace FirstOne.Cadastros.Infra.Data.Context
 {
-    public class SqlServerContext : DbContext
+    public class SqlServerContext : DbContext, IUnitOfWork
     {
         public SqlServerContext(DbContextOptions<SqlServerContext> options)
             : base(options) { }
@@ -14,6 +16,10 @@ namespace FirstOne.Cadastros.Infra.Data.Context
         public DbSet<Usuario> Usuario { get; set; }
         public DbSet<UsuarioClaim> UsuarioClaim { get; set; }
 
+        public async Task<bool> Commit()
+        {
+            return await base.SaveChangesAsync() > 0;
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

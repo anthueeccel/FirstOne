@@ -71,7 +71,7 @@ namespace FirstOne.Cadastros.Application.Services
                 new Claim(ClaimTypes.Email, usuario.Email)
             };
 
-            foreach (var claim in usuario.usuarioClaims)
+            foreach (var claim in usuario.UsuarioClaims)
             {
                 claims.Add(new Claim(Convert.ToString(claim.EntidadeEnum), claim.Endpoint));
             }
@@ -95,13 +95,13 @@ namespace FirstOne.Cadastros.Application.Services
             return tokenHandler.WriteToken(token);
         }
 
-        public void AtualizarClaims(UsuarioClaimViewModel usuarioClaimViewModel)
+        public async Task AtualizarClaims(UsuarioClaimViewModel usuarioClaimViewModel)
         {
             var usuario = _repository
                             .Search(x => x.Id == usuarioClaimViewModel.UsuarioId)
                             .FirstOrDefault();
 
-            foreach (var claim in usuario.usuarioClaims.ToList())
+            foreach (var claim in usuario.UsuarioClaims)
             {
                 _repository.RemoverClaims(claim);
             }
@@ -115,6 +115,7 @@ namespace FirstOne.Cadastros.Application.Services
                                                   claim.EndPoint));
             }
 
+            await _repository.UnitOfWork.Commit();
         }
     }
 }

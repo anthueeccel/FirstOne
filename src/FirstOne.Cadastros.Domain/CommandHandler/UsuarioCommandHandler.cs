@@ -22,6 +22,8 @@ namespace FirstOne.Cadastros.Domain.CommandHandler
             var pessoa = new Usuario(Guid.NewGuid(), request.Email, request.Senha, request.PessoaId);
             _repository.Add(pessoa);
 
+            await _repository.UnitOfWork.Commit();
+
             return Unit.Value;
         }
     }
