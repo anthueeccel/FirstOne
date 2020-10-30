@@ -11,9 +11,9 @@ namespace FirstOne.Cadastros.Domain.Tests.Entities
         [Trait("Cadastro", "Usuário")]
         public void deve_criar_entidade_pessoa()
         {
-            var usuarioEsperado = new { Id = Guid.NewGuid(), Email = "teste@teste", Senha = "1234", PessoaId = Guid.NewGuid() };
+            var usuarioEsperado = new { Id = Guid.NewGuid(), Email = "teste@teste", Senha = "1234", PessoaId = Guid.NewGuid(), Role = "motorista" };
 
-            var usuario = new Usuario(usuarioEsperado.Id, usuarioEsperado.Email, usuarioEsperado.Senha, usuarioEsperado.PessoaId);
+            var usuario = new Usuario(usuarioEsperado.Id, usuarioEsperado.Email, usuarioEsperado.Senha, usuarioEsperado.PessoaId, usuarioEsperado.Role);
             usuarioEsperado.Should().Equals(usuario);
             usuario.Id.Should().Be(usuarioEsperado.Id);
             usuario.Email.Should().Be(usuarioEsperado.Email);

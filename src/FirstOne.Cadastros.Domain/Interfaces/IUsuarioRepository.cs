@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace FirstOne.Cadastros.Domain.Interfaces
 {
-    public interface IUsuarioRepository
+    public interface IUsuarioRepository : IRepository
     {
         void Add(Usuario usuario);
         IEnumerable<Usuario> GetAll();

@@ -19,8 +19,10 @@ namespace FirstOne.Cadastros.Domain.CommandHandler
 
         public async Task<Unit> Handle(AddUsuarioCommand request, CancellationToken cancellationToken)
         {
-            var pessoa = new Usuario(Guid.NewGuid(), request.Email, request.Senha, request.PessoaId);
+            var pessoa = new Usuario(Guid.NewGuid(), request.Email, request.Senha, request.PessoaId, request.Role);
             _repository.Add(pessoa);
+
+            await _repository.UnitOfWork.Commit();
 
             return Unit.Value;
         }

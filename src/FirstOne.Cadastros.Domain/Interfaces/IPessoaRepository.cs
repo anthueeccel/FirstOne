@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace FirstOne.Cadastros.Domain.Interfaces
 {
-    public interface IPessoaRepository
+    public interface IPessoaRepository : IRepository
     {
         IEnumerable<Pessoa> GetAll();
         void Add(Pessoa pessoa);

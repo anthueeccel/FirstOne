@@ -8,19 +8,13 @@ using System.Linq;
 
 namespace FirstOne.Cadastros.Infra.Data.Repositories
 {
-    public class PessoaRepository : IPessoaRepository
+    public class PessoaRepository : Repository, IPessoaRepository
     {
-        private SqlServerContext _context;
-
-        public PessoaRepository(SqlServerContext context)
-        {
-            _context = context;
-        }
-
+        public PessoaRepository(SqlServerContext context) : base(context) { }
+        
         public void Add(Pessoa pessoa)
         {
             _context.Pessoa.Add(pessoa);
-            _context.SaveChanges();
         }
 
         public IEnumerable<Pessoa> GetAll()
@@ -41,7 +35,6 @@ namespace FirstOne.Cadastros.Infra.Data.Repositories
         public void Update(Pessoa pessoa)
         {
             _context.Pessoa.Update(pessoa);
-            _context.SaveChanges();
         }
     }
 }
