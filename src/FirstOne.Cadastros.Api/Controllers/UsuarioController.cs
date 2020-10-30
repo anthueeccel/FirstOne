@@ -32,7 +32,8 @@ namespace FirstOne.Cadastros.Api.Controllers
         }
 
         [HttpGet]
-        [ClaimsAuthorization("Usuario", "GetAll")]
+        [Authorize(Roles = "Zezinho")]
+        //[ClaimsAuthorization("Usuario", "GetAll")]
         public IEnumerable<UsuarioViewModel> GetAll()
         {
             return _appService.GetAll();

@@ -36,7 +36,7 @@ namespace FirstOne.Cadastros.Application.Services
 
         public async Task AddAsync(UsuarioViewModel usuario)
         {
-            var command = new AddUsuarioCommand(usuario.Email, usuario.Senha, usuario.PessoaId);
+            var command = new AddUsuarioCommand(usuario.Email, usuario.Senha, usuario.PessoaId, usuario.Role);
 
             if (!command.IsValid())
             {
@@ -68,7 +68,8 @@ namespace FirstOne.Cadastros.Application.Services
         {
             var claims = new List<Claim>()
             {
-                new Claim(ClaimTypes.Email, usuario.Email)
+                new Claim(ClaimTypes.Email, usuario.Email),
+                new Claim(ClaimTypes.Role, usuario.Role)
             };
 
             foreach (var claim in usuario.UsuarioClaims)

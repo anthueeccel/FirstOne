@@ -26,7 +26,7 @@ namespace FirstOne.Cadastros.Domain.Tests.CommandHandlerTests
         public async Task deve_retornar_true()
         {
             //Arrange
-            var addUsuarioCommand = new AddUsuarioCommand("Teste Usuario", "1234", Guid.NewGuid());
+            var addUsuarioCommand = new AddUsuarioCommand("Teste Usuario", "1234", Guid.NewGuid(), "Motorista");
 
             _mocker.GetMock<IUsuarioRepository>()
                .Setup(e => e.UnitOfWork)
